@@ -1,0 +1,8 @@
+[
+{
+  "directory": "D:/A_University/CPS/ca1/build",
+  "command": "C:\\mingw1310_64\\bin\\g++.exe  @CMakeFiles/CPS4042.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\CPS4042.dir\\src\\main.cpp.obj -c D:\\A_University\\CPS\\ca1\\src\\main.cpp",
+  "file": "D:/A_University/CPS/ca1/src/main.cpp",
+  "output": "CMakeFiles/CPS4042.dir/src/main.cpp.obj"
+}
+]
