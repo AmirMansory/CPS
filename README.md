@@ -18,8 +18,8 @@ Developed as part of CPS4042 – Real-Time Embedded Systems.
 |--------|---------------|
 | Amir   | Integration, Documentation, CMake, Final Testing |
 | Negin  | I2C Protocol Simulation |
-| Armin  | USART Full Duplex Communication |
-| Saba   | I2C Multiplexer |
+| Armin  | 
+| Saba   | USART Full Duplex Communication |
 
 ---
 
