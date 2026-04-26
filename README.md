@@ -97,7 +97,7 @@ Sensor(s) --> I2C --> I2CMux --> USART --> MCU --> Storage
 
 
 ## ✅ Code Standards
-Follow C++17
+Follow C++20
 Clear commit messages
 One feature per branch
 Pull Request required before merging
