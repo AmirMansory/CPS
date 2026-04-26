@@ -82,9 +82,6 @@ cmake ..
 make
 ./app
 
-text
-
----
 
 ## 🔁 Development Workflow
 Work on your feature branch
@@ -94,12 +91,8 @@ Push branch
 Open Pull Request → dev
 After review → Merge
 
-text
-
----
 
 ## 📊 Communication Architecture
-text
 Sensor(s) --> I2C --> I2CMux --> USART --> MCU --> Storage
 
 
