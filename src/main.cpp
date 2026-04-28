@@ -41,6 +41,6 @@ main()
 
     micro.start();
     disSen.start();
-
+    
     return Application::exec();
 }
