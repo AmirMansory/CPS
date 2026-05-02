@@ -3,33 +3,41 @@
 
 #include <CPS4042/Hardwares/Boards/Esp8266.h>
 #include <CPS4042/Sketchs/AbstractSketch.h>
-#include <CPS4042/Utils/ByteStream.h>
-#include <CPS4042/Utils/Wave.h>
-#include <bitset>
+#include <iostream>
 
 class MicroController : public AbstractSketch<Boards::Esp8266>
 {
 public:
-    explicit MicroController(Boards::Esp8266* node) :
-        AbstractSketch<Boards::Esp8266> {node}
-    {}
+    explicit MicroController(Boards::Esp8266* node)
+        : AbstractSketch<Boards::Esp8266>{node} {}
 
-    std::int32_t
-    setup(Boards::Esp8266::Gpio& gpio) override
+    std::int32_t setup(Boards::Esp8266::Gpio&) override
     {
-        std::cout << "esp8266 setup completed." << std::endl;
-        // node()->i2c.init(0x29);
-        // delay(1'000);
+        std::cout << "[SETUP] Microcontroller ready" << std::endl;
+        node()->i2c.write(0x29);
         return 0;
     }
 
-    std::int32_t
-    loop(Boards::Esp8266::Gpio& gpio) override
+    std::int32_t loop(Boards::Esp8266::Gpio&) override
     {
-        // delay(100);
+        if (node()->i2c.isDataAvailable())
+        {
+            Byte high = node()->i2c.read();
+            Byte low  = node()->i2c.read();
+
+            uint16_t distance = (static_cast<uint16_t>(static_cast<uint8_t>(high)) << 8)
+                              | static_cast<uint8_t>(low);
+
+            std::cout << ">>> DISTANCE = " << distance << " mm" << std::endl;
+        }
+
+        if (node()->i2c.isIdle())
+        {
+            node()->i2c.write(0x29);
+        }
+        delay(500);
         return 0;
     }
 };
 
-
-#endif    // MICROCONTROLLER_H
+#endif
