@@ -91,7 +91,7 @@ public:
             Protocols::AbstractI2C<Esp8266, Gpio> {b}
         {}
 
-        
+
         void
         init(Byte address) override
         {}
@@ -163,7 +163,7 @@ public:
                     m_timeoutCounter = 0;
                     return;
                 } else {
-                    std::cerr << "I2C: NACK received for address." << std::endl;
+                    std::cerr << "I2C: No ACK received for address." << std::endl;
                     m_state = State::Error;
                     resetTransaction();
                 }
