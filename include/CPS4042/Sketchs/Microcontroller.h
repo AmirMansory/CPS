@@ -18,15 +18,23 @@ public:
     setup(Boards::Esp8266::Gpio& gpio) override
     {
         std::cout << "esp8266 setup completed." << std::endl;
-        // node()->i2c.init(0x29);
-        // delay(1'000);
+        node()->i2c.write(0x29);
+        delay(500);
         return 0;
     }
 
     std::int32_t
     loop(Boards::Esp8266::Gpio& gpio) override
     {
-        // delay(100);
+        if (node()->i2c.isDataAvailable()){
+            Byte high = node()->i2c.read();
+            Byte low = node()->i2c.read();
+            uint16_t distance = (static_cast<uint16_t>(high) << 8) | low;
+            std::cout << "Distance: " << distance << " mm" << std::endl;
+            node()->i2c.write(0x29);
+
+        }
+        delay(100);
         return 0;
     }
 };
