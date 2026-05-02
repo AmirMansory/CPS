@@ -1,22 +1,12 @@
 CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  D:\A_University\CPS\ca1\src\main.cpp \
- D:/A_University/CPS/ca1/include/CPS4042/Sketchs/Microcontroller.h \
- D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Boards/Esp8266.h \
- D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Board.h \
- D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Processor.h \
- D:/A_University/CPS/ca1/include/CPS4042/Globals/Object.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/chrono \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/requires_hosted.h \
+ D:/A_University/CPS/ca1/include/CPS4042/main.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/csignal \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/c++config.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/os_defines.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/cpu_defines.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/pstl/pstl_config.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/chrono.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ratio \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/type_traits \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cstdint \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/stdint.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/stdint.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/signal.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/crtdefs.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/corecrt.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/_mingw.h \
@@ -24,25 +14,51 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/mingw1310_64/x86_64-w64-mingw32/include/_mingw_secapi.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/vadefs.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/pthread_signal.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/thread \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/requires_hosted.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/compare \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/concepts \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/type_traits \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/stop_token \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/atomic \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/atomic_base.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/new \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/exception.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/stdint.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/stdint.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/stddef.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/stddef.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/limits \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ctime \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/atomic_lockfree_defines.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/move.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/atomic_wait.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/functional_hash.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/hash_bytes.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/gthr.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/gthr-default.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/pthread.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/errno.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/sys/types.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/_mingw_off_t.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/process.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/corecrt_startup.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/limits.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/syslimits.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/limits.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/time.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/sys/timeb.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/_timeval.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/pthread_time.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/parse_numbers.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/pthread_compat.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/pthread_unistd.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/numeric_traits.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/cpp_type_traits.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/type_traits.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/concepts \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/compare \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bit \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/sstream \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/istream \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ios \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/std_mutex.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/functexcept.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/exception_defines.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/std_thread.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/iosfwd \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stringfwd.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/memoryfwd.h \
@@ -51,29 +67,40 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/mingw1310_64/x86_64-w64-mingw32/include/wchar.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/corecrt_stdio_config.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/corecrt_wstdlib.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/_mingw_off_t.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/_mingw_stat64.h \
  C:/mingw1310_64/x86_64-w64-mingw32/include/swprintf.inl \
  C:/mingw1310_64/x86_64-w64-mingw32/include/sec_api/wchar_s.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/exception \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/exception.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/exception_ptr.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/exception_defines.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/cxxabi_init_exception.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/typeinfo \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/hash_bytes.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/new \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/move.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/nested_exception.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/char_traits.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_construct.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/tuple \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_pair.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/utility.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/uses_allocator.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/invoke.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ranges_util.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ranges_base.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/initializer_list \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_iterator.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_iterator_base_types.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/iterator_concepts.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ptr_traits.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ranges_cmp.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_construct.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_iterator_base_funcs.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/concept_check.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/debug/assertions.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/max_size_type.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/numbers \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/refwrap.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_function.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward/binders.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/unique_ptr.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ostream \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ios \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/exception \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/exception_ptr.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/cxxabi_init_exception.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/typeinfo \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/nested_exception.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/char_traits.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/localefwd.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/c++locale.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/clocale \
@@ -84,49 +111,23 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/mingw1310_64/x86_64-w64-mingw32/include/ctype.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ios_base.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/atomicity.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/gthr.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/gthr-default.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/pthread.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/errno.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/sys/types.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/process.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/corecrt_startup.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/limits.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/syslimits.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/limits.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/signal.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/pthread_signal.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/pthread_compat.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/pthread_unistd.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/atomic_word.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/locale_classes.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/string \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/allocator.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/c++allocator.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/new_allocator.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/functexcept.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ostream_insert.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/cxxabi_forced.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_iterator.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_function.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward/binders.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_algobase.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/stl_pair.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/utility.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/debug/debug.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/predefined_ops.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/refwrap.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/invoke.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bit \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/range_access.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/initializer_list \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/basic_string.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/alloc_traits.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/alloc_traits.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/string_view \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/functional_hash.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ranges_base.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/max_size_type.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/numbers \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/string_view.tcc \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/string_conversions.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cstdlib \
@@ -142,10 +143,7 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/basic_string.tcc \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/memory_resource.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cstddef \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/uses_allocator.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/uses_allocator_args.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/tuple \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ranges_util.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/locale_classes.tcc \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/system_error \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/error_constants.h \
@@ -161,8 +159,25 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/ctype_inline.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/locale_facets.tcc \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/basic_ios.tcc \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ostream \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ostream.tcc \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/semaphore \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/semaphore_base.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/chrono.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ratio \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cstdint \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/limits \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ctime \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/parse_numbers.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/atomic_timed_wait.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/this_thread_sleep.h \
+ C:/mingw1310_64/x86_64-w64-mingw32/include/semaphore.h \
+ D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Boards/Esp8266.h \
+ D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Board.h \
+ D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Processor.h \
+ D:/A_University/CPS/ca1/include/CPS4042/Globals/Object.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/chrono \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/sstream \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/istream \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/istream.tcc \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/sstream.tcc \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/vector \
@@ -178,7 +193,6 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/shared_ptr.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/shared_ptr_base.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/allocated_ptr.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/unique_ptr.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/aligned_buffer.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/concurrence.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/align.h \
@@ -200,19 +214,6 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/span \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/variant \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/ranges_algobase.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/thread \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/stop_token \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/atomic \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/atomic_base.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/atomic_lockfree_defines.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/atomic_wait.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/std_mutex.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/std_thread.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/semaphore \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/semaphore_base.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/atomic_timed_wait.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/this_thread_sleep.h \
- C:/mingw1310_64/x86_64-w64-mingw32/include/semaphore.h \
  D:/A_University/CPS/ca1/include/CPS4042/Protocols/Protocol.h \
  D:/A_University/CPS/ca1/include/CPS4042/Units/Byte.h \
  C:/boost/boost_1_84_0/boost/assert.hpp \
@@ -1103,37 +1104,7 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/unique_lock.h \
  D:/A_University/CPS/ca1/include/CPS4042/Wires/Pin.h \
  D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Transmitter.h \
- D:/A_University/CPS/ca1/include/CPS4042/Sketchs/AbstractSketch.h \
- D:/A_University/CPS/ca1/include/CPS4042/Utils/ByteStream.h \
- D:/A_University/CPS/ca1/include/CPS4042/Utils/Wave.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bitset \
- D:/A_University/CPS/ca1/include/CPS4042/Sketchs/Sensor.h \
  D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Sensors/VL530X.h \
- C:/boost/boost_1_84_0/boost/random/mersenne_twister.hpp \
- C:/boost/boost_1_84_0/boost/integer/integer_mask.hpp \
- C:/boost/boost_1_84_0/boost/integer.hpp \
- C:/boost/boost_1_84_0/boost/integer_traits.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/config.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/ptr_helper.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/seed.hpp \
- C:/boost/boost_1_84_0/boost/utility/enable_if.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/seed_impl.hpp \
- C:/boost/boost_1_84_0/boost/config/no_tr1/cmath.hpp \
- C:/boost/boost_1_84_0/boost/integer/static_log2.hpp \
- C:/boost/boost_1_84_0/boost/random/traits.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/const_mod.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/large_arithmetic.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/integer_log2.hpp \
- C:/boost/boost_1_84_0/boost/integer/integer_log2.hpp \
- C:/boost/boost_1_84_0/boost/core/bit.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/disable_warnings.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/enable_warnings.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/signed_unsigned_tools.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/generator_bits.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/generator_seed_seq.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/polynomial.hpp \
- C:/boost/boost_1_84_0/boost/random/uniform_int_distribution.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/operators.hpp \
- C:/boost/boost_1_84_0/boost/random/detail/uniform_int_float.hpp \
- D:/A_University/CPS/ca1/include/CPS4042/main.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/csignal
+ D:/A_University/CPS/ca1/include/CPS4042/Sketchs/Microcontroller.h \
+ D:/A_University/CPS/ca1/include/CPS4042/Sketchs/AbstractSketch.h \
+ D:/A_University/CPS/ca1/include/CPS4042/Sketchs/Sensor.h
