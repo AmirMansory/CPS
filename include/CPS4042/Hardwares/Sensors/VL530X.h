@@ -33,7 +33,7 @@ public:
     explicit Vl530x() : Parent {"Vl530x::processor"}
     {
         m_processor->installProtocol(&i2c);
-        std::cout << "one instance of Vl530x created." << std::endl;
+        std::cout << "[DEBUG] Vl530x created." << std::endl;
     }
 
     class I2C : public Protocols::AbstractI2C<Vl530x, Gpio>
@@ -45,8 +45,8 @@ public:
         void write(Byte) override {}
         Byte read() override { return 0; }
 
-        void setData(uint16_t value) {
-            std::cout << "[DEBUG] Slave setData: setting distance value " << value << " mm." << std::endl;
+        void setData(uint16_t value)
+        {
             uint8_t ub1 = (value >> 8) & 0xFF;
             uint8_t ub2 = value & 0xFF;
             uint8_t maxv = (ub1 > ub2) ? ub1 : ub2;
@@ -54,30 +54,32 @@ public:
             m_checksum = maxv - minv;
             m_b1 = ub1;
             m_b2 = ub2;
+            std::cout << ">>> [SLAVE] Data: " << value << " mm"
+                      << " (0x" << std::hex << (int)ub1 << ",0x" << (int)ub2
+                      << ",CS=0x" << (int)m_checksum << ")" << std::dec << std::endl;
         }
 
         bool isReady() const { return m_state == State::WaitAddress; }
 
-        void run(Gpio& gpio) override {
+        void run(Gpio& gpio) override
+        {
             switch (m_state) {
 
             case State::WaitAddress: {
-                std::cout << "[DEBUG] Slave WaitAddress: waiting for address byte." << std::endl;
                 if (!gpio.sda.hasByteToRead()) return;
                 Byte raw = gpio.sda.read();
-                Byte restored = raw;              
-                Byte receivedAddr = (restored >> 1) & 0x7F;
-                bool isRead = (restored & 1) == 1;
+                Byte receivedAddr = (raw >> 1) & 0x7F;
+                bool isRead = (raw & 1) == 1;
                 if (receivedAddr == DEVICE_ADDRESS && isRead) {
-                    std::cout << "[DEBUG] Slave WaitAddress: address byte received." << std::endl;
+                    std::cout << ">>> [SLAVE] Address match – ACK" << std::endl;
+                    // flush RX before sending ACK
+                    while (gpio.sda.hasBitToRead()) gpio.sda.readBit();
                     m_state = State::SendAck;
                 }
                 break;
             }
 
-
             case State::SendAck: {
-                std::cout << "[DEBUG] Slave SendAck: sending ACK bit." << std::endl;
                 if (!gpio.sda.hasBitToWrite()) {
                     gpio.sda.write(Bit::Zero);
                     m_byteIndex = 0; m_bitCounter = 0;
@@ -87,34 +89,36 @@ public:
             }
 
             case State::SendByte: {
-                std::cout << "[DEBUG] Slave SendByte: sending data byte " << (int)m_byteIndex + 1 << "." << std::endl;
-                Byte currentByte;
-                if (m_byteIndex == 0) currentByte = m_b1;
-                else if (m_byteIndex == 1) currentByte = m_b2;
-                else currentByte = m_checksum;
-                
+                Byte currentByte = (m_byteIndex == 0) ? m_b1 :
+                                   (m_byteIndex == 1) ? m_b2 : m_checksum;
                 Bit bit = (currentByte >> (7 - m_bitCounter)) & 1 ? Bit::One : Bit::Zero;
                 gpio.sda.write(bit);
-                
                 if (++m_bitCounter == 8) {
+                    // === DISCARD echoed data bits from own RX buffer ===
+                    while (gpio.sda.hasBitToRead())
+                        gpio.sda.readBit();
                     m_bitCounter = 0; ++m_byteIndex;
                     m_state = State::WaitMasterAck;
                 }
                 break;
             }
+
             case State::WaitMasterAck: {
-                std::cout << "[DEBUG] Slave WaitMasterAck: waiting for master ACK." << std::endl;
                 if (!gpio.sda.hasBitToRead()) return;
                 Bit ack = gpio.sda.readBit();
                 if (ack == Bit::Zero) {
-                    std::cout << "[DEBUG] Slave WaitMasterAck: ACK received from master." << std::endl;
-                    if (m_byteIndex < 3) m_state = State::SendByte;
+                    std::cout << "[SLAVE] ACK – continue" << std::endl;
+                    if (m_byteIndex < 3)
+                        m_state = State::SendByte;
                 } else {
-                    std::cout << "[DEBUG] Slave WaitMasterAck: NACK received from master, ending transmission." << std::endl;
+                    std::cout << ">>> [SLAVE] NACK – done" << std::endl;
+                    // flush everything before returning to idle
+                    while (gpio.sda.hasBitToRead()) gpio.sda.readBit();
                     m_state = State::WaitAddress;
                 }
                 break;
             }
+
             default: break;
             }
         }
@@ -123,7 +127,7 @@ public:
         enum class State : uint8_t { Idle, WaitAddress, SendAck, SendByte, WaitMasterAck };
         State m_state = State::WaitAddress;
         static constexpr Byte DEVICE_ADDRESS = 0x29;
-        Byte m_b1 = 0, m_b2 = 0, m_checksum = 0;
+        uint8_t m_b1 = 0, m_b2 = 0, m_checksum = 0;
         uint8_t m_bitCounter = 0, m_byteIndex = 0;
     } mutable i2c{this};
 

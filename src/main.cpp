@@ -6,15 +6,15 @@
 #include <CPS4042/Wires/Link.h>
 #include <memory>
 
-int main() {
-    std::cout << "[DEBUG] === I2C Simulation Start ===" << std::endl;
+int main()
+{
     Boards::Esp8266 esp8266;
     Sensors::Vl530x  vl530x;
 
-    auto linkVdd   = std::make_shared<Link>();
-    auto linkGnd   = std::make_shared<Link>();
-    auto linkScl   = std::make_shared<Link>();
-    auto linkSda   = std::make_shared<Link>();
+    auto linkVdd = std::make_shared<Link>();
+    auto linkGnd = std::make_shared<Link>();
+    auto linkScl = std::make_shared<Link>();
+    auto linkSda = std::make_shared<Link>();
 
     CPS_SET_OBJECT_NAME(esp8266);
     CPS_SET_OBJECT_NAME(vl530x);
@@ -36,6 +36,7 @@ int main() {
     MicroController mc(&esp8266);
     Sensor          sensor(&vl530x);
 
+    // IMPORTANT: start sensor first so it can listen to SCL edges
     sensor.start();
     mc.start();
 

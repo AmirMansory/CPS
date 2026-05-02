@@ -11,25 +11,31 @@ public:
     explicit MicroController(Boards::Esp8266* node)
         : AbstractSketch<Boards::Esp8266>{node} {}
 
-    std::int32_t setup(Boards::Esp8266::Gpio&) override {
-        std::cout << "[DEBUG] Micro setup, starting first read." << std::endl;
+    std::int32_t setup(Boards::Esp8266::Gpio&) override
+    {
+        std::cout << "[SETUP] Microcontroller ready" << std::endl;
         node()->i2c.write(0x29);
         return 0;
     }
 
-    std::int32_t loop(Boards::Esp8266::Gpio&) override {
-        if (node()->i2c.isDataAvailable()) {
+    std::int32_t loop(Boards::Esp8266::Gpio&) override
+    {
+        if (node()->i2c.isDataAvailable())
+        {
             Byte high = node()->i2c.read();
             Byte low  = node()->i2c.read();
-            uint16_t distance = (static_cast<uint16_t>(high) << 8) | low;
-            std::cout << ">>> Distance: " << distance << " mm <<<" << std::endl;
+
+            uint16_t distance = (static_cast<uint16_t>(static_cast<uint8_t>(high)) << 8)
+                              | static_cast<uint8_t>(low);
+
+            std::cout << ">>> DISTANCE = " << distance << " mm" << std::endl;
         }
 
-        if (node()->i2c.isIdle()) {
-            std::cout << "[DEBUG] Micro loop: master idle, requesting next read." << std::endl;
+        if (node()->i2c.isIdle())
+        {
             node()->i2c.write(0x29);
         }
-        delay(200); // simulate some processing delay
+        delay(500);
         return 0;
     }
 };
