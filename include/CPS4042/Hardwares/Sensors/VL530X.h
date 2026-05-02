@@ -39,6 +39,22 @@ public:
 
     class I2C : public Protocols::AbstractI2C<Vl530x, Gpio>
     {
+    private:
+        enum class State {
+            Idle,
+            WaitAddress,
+            SendAck,
+            SendByte,
+            WaitMasterAck
+        };
+
+        State m_state = State::WaitAddress;
+        static constexpr Byte DEVICE_ADDRESS = 0x29;
+        Byte m_b1 = 0, m_b2 = 0;
+        Byte m_checksum = 0;
+        uint8_t m_bitCounter = 0;
+        uint8_t m_byteIndex = 0;
+
 
     public:
         explicit I2C(Vl530x* b) :
@@ -46,8 +62,14 @@ public:
         {}
 
         void
-        init(Byte address) override
-        {}
+        init(Byte) override{
+            m_state = State::WaitAddress;
+            m_b1 = 0;
+            m_b2 = 0;
+            m_checksum = 0;
+            m_bitCounter = 0;
+            m_byteIndex = 0;
+        }
 
         void
         write(Byte byte) override
@@ -59,9 +81,75 @@ public:
             return 0;
         }
 
+        void setMeasurementData(uint16_t value){
+            m_b1 = (value >> 8) & 0xFF;
+            m_b2 = value & 0xFF;
+            Byte maxv = (m_b1 > m_b2) ? m_b1 : m_b2;
+            Byte minv = (m_b1 < m_b2) ? m_b1 : m_b2;
+            m_checksum = maxv - minv;
+        }
+
+        bool isReady() const{
+            return m_state == State::WaitAddress;
+        }
+
         void
-        run(Gpio& gpio) override
-        {}
+        run(Gpio& gpio) override{
+            switch(m_state)
+            {
+                case State::WaitAddress:{
+                    if (!gpio.sda.hasByteToRead()) return;
+                    Byte raw = gpio.sda.read();
+                    Byte receivedAddr = (raw >> 1) & 0x7F;
+                    bool isRead = (raw & 0x1) == 1;
+                    if (receivedAddr == DEVICE_ADDRESS && isRead){
+                        m_state = State::SendAck;
+                    }
+                    break;
+                }
+                case State::SendAck:{
+                    if (!gpio.sda.hasBitToWrite()){
+                        gpio.sda.write(Bit::Zero);
+                        m_byteIndex = 0;
+                        m_bitCounter = 0;
+                        m_state = State::SendByte;
+                    }
+                    break;
+                }
+                case State::SendByte:{
+                    Byte currentByte;
+                    if (m_byteIndex == 0) currentByte = m_b1;
+                    else if (m_byteIndex == 1) currentByte = m_b2;
+                    else currentByte = m_checksum;
+
+                    Bit bit = (((currentByte >> (7 - m_bitCounter)) & 1) ? Bit::One : Bit::Zero);
+                    gpio.sda.write(bit);
+
+                    m_bitCounter++;
+                    if (m_bitCounter == 8){
+                        gpio.sda.write(Bit::Z);
+                        m_bitCounter = 0;
+                        m_byteIndex++;
+                        m_state = State::WaitMasterAck;
+                    }
+                    break;
+                }
+                case State::WaitMasterAck:{
+                    if (!gpio.sda.hasBitToRead()) return;
+                    Bit ack = gpio.sda.readBit();
+                    if (ack == Bit::Zero){
+                        if (m_byteIndex < 3){
+                            m_state = State::SendByte;
+                        }
+                    }else{
+                        m_state = State::WaitAddress;
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
 
     } mutable i2c {this};
 
