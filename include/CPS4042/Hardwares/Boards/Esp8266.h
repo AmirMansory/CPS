@@ -231,6 +231,8 @@ public:
     public:
         explicit USART(Esp8266* b) : Protocols::AbstractUsart<Esp8266, Gpio>{b} {}
 
+        bool isBusy() const { return m_busy; }
+
         void request(Byte address) {
             if (m_busy) return;
             m_busy = true;
