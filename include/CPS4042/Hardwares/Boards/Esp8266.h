@@ -230,9 +230,56 @@ public:
     {
     public:
         explicit USART(Esp8266* b) : Protocols::AbstractUsart<Esp8266, Gpio>{b} {}
+
+        void request(Byte address) {
+            if (m_busy) return;
+            m_busy = true;
+            m_address = address;
+            m_state = State::SEND_ADDR;
+        }
+
+        bool hasResponse() const { return m_hasResponse; }
+
+        Byte getResponse() {
+            m_hasResponse = false;
+            m_busy = false;
+            return m_response;
+        }
+
+        void run(Gpio& gpio) override {
+            switch (m_state) {
+                case State::IDLE:
+                    break;
+
+                case State::SEND_ADDR:
+                    if (!gpio.tx.hasBitToWrite() && !gpio.tx.hasByteToWrite()) {
+                        gpio.tx.write(m_address);
+                        m_state = State::WAIT_RESPONSE;
+                    }
+                    break;
+
+                case State::WAIT_RESPONSE:
+                    if (gpio.rx.hasByteToRead()) {
+                        m_response = gpio.rx.read();
+                        m_hasResponse = true;
+                        m_state = State::IDLE;
+                        m_busy = false;
+                    }
+                    break;
+            }
+        }
+
+
         void write(Byte) override {}
         Byte read() override { return 0; }
-        void run(Gpio&) override {}
+
+    private:
+        enum class State { IDLE, SEND_ADDR, WAIT_RESPONSE };
+        State m_state = State::IDLE;
+        bool  m_busy = false;
+        bool  m_hasResponse = false;
+        Byte  m_address = 0;
+        Byte  m_response = 0;
     } mutable usart{this};
 
 protected:
