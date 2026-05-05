@@ -35,8 +35,10 @@ public:
         m_processor->installProtocol(&i2c);
         std::cout << "[DEBUG] Vl530x created." << std::endl;
     }
-
-    class I2C : public Protocols::AbstractI2C<Vl530x, Gpio>
+  
+   
+   
+   class I2C : public Protocols::AbstractI2C<Vl530x, Gpio>
     {
     public:
         explicit I2C(Vl530x* b) : Protocols::AbstractI2C<Vl530x, Gpio>{b} {}

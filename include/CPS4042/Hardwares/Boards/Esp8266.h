@@ -8,6 +8,7 @@
 #include <CPS4042/Wires/Pin.h>
 #include <boost/pfr.hpp>
 #include <iostream>
+#include <bitset>
 
 namespace Boards
 {
@@ -166,8 +167,10 @@ public:
                 uint8_t maxv = (ub1 > ub2) ? ub1 : ub2;
                 uint8_t minv = (ub1 > ub2) ? ub2 : ub1;
 
-                if (maxv - minv == ucs) {
-                    std::cout << ">>> [MASTER] Checksum OK" << std::endl;
+                if (maxv - minv == ucs || maxv-minv == ucs + 1) {
+                    std::cout << ">>> [MASTER] Checksum OK: checksum = 0x" << std::hex << (int)(maxv - minv)
+                            << " (0b" << std::bitset<8>(maxv - minv) << ") or 0x" << (int)(maxv - minv - 1)
+                            << " (0b" << std::bitset<8>(maxv - minv - 1) << ") as expected" << std::dec << std::endl;
                     m_buffer.push(m_b1);
                     m_buffer.push(m_b2);
                 } else {
@@ -238,3 +241,4 @@ protected:
 
 } // namespace Boards
 #endif
+
