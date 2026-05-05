@@ -35,13 +35,13 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 51,
+				"line" : 52,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 38,
+				"line" : 39,
 				"parent" : 0
 			}
 		]
@@ -149,7 +149,8 @@
 				19,
 				20,
 				21,
-				22
+				22,
+				23
 			]
 		},
 		{
@@ -276,6 +277,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "include/CPS4042/Sketchs/HardDisk.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/CPS4042/Hardwares/Comm/Usb.h",
 			"sourceGroupIndex" : 0
 		}
 	],

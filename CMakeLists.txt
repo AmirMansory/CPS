@@ -33,6 +33,7 @@ add_executable(CPS4042
     include/CPS4042/Utils/ByteStream.h
 
     include/CPS4042/Sketchs/HardDisk.h
+    include/CPS4042/Hardwares/Comm/Usb.h
 )
 
 target_include_directories(CPS4042
