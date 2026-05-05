@@ -13,16 +13,29 @@ public:
         AbstractSketch<Sensors::Usb> {node}
     {}
 
-    std::int32_t
-    setup(Sensors::Usb::Gpio& gpio) override
+    std::int32_t setup(Sensors::Usb::Gpio& gpio) override
     {
+        // Bind the storage map to the USART protocol
+        node()->usart.setLookup([this](Byte addr) -> Byte {
+            auto it = m_storage.find(addr);
+            return (it != m_storage.end()) ? it->second : 0x00;
+        });
         std::cout << "HardDisk setup completed." << std::endl;
         return 0;
     }
 
-    std::int32_t
-    loop(Sensors::Usb::Gpio& gpio) override
+    std::int32_t loop(Sensors::Usb::Gpio& gpio) override
     {
+        // Fetch and log any completed transaction
+        auto tx = node()->usart.fetchLastTransaction();
+        if (tx.valid) {
+            static unsigned int requestCount = 0;
+            ++requestCount;
+            std::cout << "[HardDisk #" << requestCount
+                      << "] address = 0x" << std::hex << (int)tx.address
+                      << " -> data = 0x" << (int)tx.data << std::dec
+                      << std::endl;
+        }
         return 0;
     }
 
