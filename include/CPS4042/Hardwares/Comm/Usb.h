@@ -6,6 +6,8 @@
 #include <CPS4042/Units/BaudRate.h>
 #include <CPS4042/Wires/Pin.h>
 
+#include <functional>   // <-- required for std::function
+
 namespace Sensors {
 
 using UsbVoltage = VoltageLevel3_3v;
@@ -34,23 +36,41 @@ public:
     public:
         explicit USART(Usb* b) : Protocols::AbstractUsart<Usb, Gpio>{b} {}
 
+        void setLookup(std::function<Byte(Byte)> fn) { m_lookupFn = fn; }
+
+        struct Transaction {
+            bool valid   = false;
+            Byte address = 0;
+            Byte data    = 0;
+        };
+
+        Transaction fetchLastTransaction() {
+            auto t = m_lastTx;
+            m_lastTx.valid = false;
+            return t;
+        }
+
         void run(Gpio& gpio) override {
-            if (m_state == State::IDLE) {
-                if (gpio.rx.hasByteToRead()) {
-                    Byte addr = gpio.rx.read();
-                    std::cout << "Disk: received address " << (int)addr << std::endl;
-                    m_reqAddr = addr;
-                    m_state = State::SEND_DATA;
-                }
-            }
-            else if (m_state == State::SEND_DATA) {
-                // Wait until no pending writes, then send
-                if (!gpio.tx.hasBitToWrite() && !gpio.tx.hasByteToWrite()) {
-                    Byte data = m_lookup(m_reqAddr);
-                    std::cout << "Disk: sending " << (int)data << std::endl;
-                    gpio.tx.write(data);
-                    m_state = State::IDLE;
-                }
+            switch (m_state) {
+                case State::IDLE:
+                    if (gpio.rx.hasByteToRead()) {
+                        m_reqAddr = gpio.rx.read();
+                        m_state = State::SEND_DATA;
+                    }
+                    break;
+
+                case State::SEND_DATA:
+                    if (!gpio.tx.hasBitToWrite() && !gpio.tx.hasByteToWrite()) {
+                        Byte data = m_lookupFn(m_reqAddr);
+                        gpio.tx.write(data);
+
+                        m_lastTx.address = m_reqAddr;
+                        m_lastTx.data    = data;
+                        m_lastTx.valid   = true;
+
+                        m_state = State::IDLE;
+                    }
+                    break;
             }
         }
 
@@ -59,15 +79,18 @@ public:
 
     private:
         enum class State { IDLE, SEND_DATA };
-        State m_state = State::IDLE;
-        Byte  m_reqAddr = 0;
-        // Sample lookup: just return complement of address (or use the map from HardDisk)
-        Byte m_lookup(Byte addr) { return ~addr; }
+        State  m_state = State::IDLE;
+        Byte   m_reqAddr = 0;
+        Transaction m_lastTx;
+        std::function<Byte(Byte)> m_lookupFn = [](Byte b) {
+            return static_cast<Byte>(~b);   // explicit cast to avoid narrowing
+        };
     } mutable usart{this};
 
 protected:
     void startModule() override {}
 };
 
-}   // namespace Sensors
-#endif
+} // namespace Sensors   // <-- namespace closed
+
+#endif // USB_H

@@ -1104,6 +1104,7 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/unique_lock.h \
  D:/A_University/CPS/ca1/include/CPS4042/Wires/Pin.h \
  D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Transmitter.h \
+ C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bitset \
  D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Sensors/VL530X.h \
  D:/A_University/CPS/ca1/include/CPS4042/Sketchs/Microcontroller.h \
  D:/A_University/CPS/ca1/include/CPS4042/Sketchs/AbstractSketch.h \
