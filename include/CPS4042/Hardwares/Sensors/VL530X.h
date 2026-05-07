@@ -7,6 +7,7 @@
 #include <CPS4042/Wires/Pin.h>
 #include <boost/pfr.hpp>
 #include <iostream>
+#include <cmath>
 
 namespace Sensors
 {
@@ -41,7 +42,7 @@ public:
     public:
         explicit I2C(Vl530x* b) : Protocols::AbstractI2C<Vl530x, Gpio>{b} {}
 
-        void init(Byte address) override {m_state = State::WaitAddress; }
+        void init(Byte address) override { m_state = State::WaitAddress; }
         void write(Byte) override {}
         Byte read() override { return 0; }
 
@@ -49,12 +50,12 @@ public:
         {
             uint8_t ub1 = (value >> 8) & 0xFF;
             uint8_t ub2 = value & 0xFF;
-            m_checksum = abs(ub1 - ub2);
+            m_checksum = static_cast<uint8_t>(std::abs(static_cast<int>(ub1) - static_cast<int>(ub2)));
             m_b1 = ub1;
             m_b2 = ub2;
         }
 
-        bool isReady() const { return m_state == State::WaitAddress;}
+        bool isReady() const { return m_state == State::WaitAddress; }
 
         void run(Gpio& gpio) override
         {
@@ -63,61 +64,62 @@ public:
             case State::Idle:
                 raw = 0;
                 receivedAddr = 0;
-                isRead = {false};
+                isRead = false;
                 m_state = State::WaitAddress;
-            // ---- wait for I2C address from master ----
+                break;
+
             case State::WaitAddress: {
                 if (!gpio.sda.hasByteToRead()) return;
                 raw = gpio.sda.read();
-                receivedAddr = (raw >> 1) & 0x7F;
-                isRead = (raw & 1) == 1;
                 
-                printf("[SLAVE] Address byte received: 0x%02X (addr=0x%02X, %s)\n",
-                    raw, receivedAddr, isRead ? "READ" : "WRITE");
+                // تبدیل به uint8_t پیش از عملیات بیتی
+                uint8_t u_raw = static_cast<uint8_t>(raw);
+                receivedAddr = (u_raw >> 1) & 0x7F;
+                isRead = (u_raw & 1) == 1;
                 
                 if (receivedAddr == DEVICE_ADDRESS && isRead) {
                     printf("[SLAVE] ✅ Address match (0x%02X) – will ACK\n", DEVICE_ADDRESS);
                     m_state = State::SendAck;
                 } else {
-                    printf("[SLAVE] ❌ Address mismatch (expected 0x%02X) – ignoring\n", DEVICE_ADDRESS);
                     m_state = State::Idle;
-                    raw = 0;
-                    receivedAddr = 0;
-                    isRead = {false};
                 }
                 break;
             }
 
-            // ---- send ACK bit to master and flush any pending data ----
             case State::SendAck: {
-                printf("[SLAVE] Entering SendAck state\n");
                 gpio.sda.write(Bit::One);
                 m_state = State::SendByte;
-
                 break;
             }
 
-            // ---- send the three data bytes (b1, b2, checksum) ----
             case State::SendByte: {
                 if (!gpio.sda.hasBitToWrite()) {
-                    printf("[SLAVE] 📤 Sending bytes: b1=0x%02X, b2=0x%02X, cs=0x%02X\n",
-                        m_b1, m_b2, m_checksum);
+                    uint8_t u_b1 = static_cast<uint8_t>(m_b1);
+                    uint8_t u_b2 = static_cast<uint8_t>(m_b2);
+                    uint8_t u_cs = static_cast<uint8_t>(m_checksum);
+                    
+                    printf("[SLAVE] 📤 Sending bytes: b1=0x%02X, b2=0x%02X, cs=0x%02X\n", u_b1, u_b2, u_cs);
                     gpio.sda.write({m_b1, m_b2, m_checksum});
                     m_state = State::WaitNack;
-                } else {
-                    printf("[SLAVE] Cannot send bytes – SDA not ready for write\n");
                 }
                 break;
             }
 
-            case State::WaitNack:
+            case State::WaitNack: {
                 if (!gpio.sda.hasBitToRead()) return;
                 nack = gpio.sda.readBit();
-                if (nack == Bit::One)
-                    std::cout << "Slave wait nack" << std::endl;
-                    m_state = State::Idle;
-                while(gpio.sda.hasBitToRead())
+                
+                if (nack == Bit::One) {
+                    std::cout << "[SLAVE] Transaction finished (NACK)" << std::endl;
+                }
+                
+                m_state = State::Idle;
+                
+                while(gpio.sda.hasBitToRead()) {
                     gpio.sda.readBit();
+                }
+                break;
+            }
 
             default: break;
             }
@@ -126,10 +128,11 @@ public:
     private:
         enum class State : uint8_t {Idle, WaitAddress, SendAck, SendByte, WaitNack};
         State m_state = State::WaitAddress;
-        static constexpr Byte DEVICE_ADDRESS = 0x29;
+        static constexpr uint8_t DEVICE_ADDRESS = 0x29;
         Byte m_b1 = 0, m_b2 = 0, m_checksum = 0;
-        Byte raw = 0, receivedAddr = 0;
-        bool isRead = {false};
+        Byte raw = 0; 
+        uint8_t receivedAddr = 0;
+        bool isRead = false;
         Bit nack = Bit::One;
     } mutable i2c{this};
 
@@ -144,6 +147,4 @@ protected:
 };
 
 } // namespace Sensors
-
-
 #endif // VL53_X_H
