@@ -26,7 +26,8 @@ add_executable(CPS4042
     include/CPS4042/Hardwares/Sensors/VL530X.h
     include/CPS4042/Globals/Object.h
     include/CPS4042/Sketchs/AbstractSketch.h
-
+    include/CPS4042/Hardwares/comm/Usb.h
+    
     include/CPS4042/Sketchs/Sensor.h
     include/CPS4042/Sketchs/Microcontroller.h
     include/CPS4042/Utils/Wave.h

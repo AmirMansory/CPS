@@ -2,6 +2,8 @@
 #define ABSTRACTSKETCH_H
 
 #include <CPS4042/Hardwares/Board.h>
+#include <cstdint> // =========================corrected
+
 
 template <typename T>
 requires std::is_base_of_v<BoardBase, T>

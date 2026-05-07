@@ -21,11 +21,31 @@ public:
     }
 
     std::int32_t
-    loop(Sensors::Usb::Gpio& gpio) override
+    ////////////////////////////////////////////////////////////////
+      loop(Sensors::Usb::Gpio& gpio) override
     {
+        if(gpio.rx.hasByteToRead())
+        {
+            Byte address = gpio.rx.read();
+            std::cout << "HardDisk: Received address: 0x" << std::hex << (int)address << std::dec << std::endl;
+            
+            auto it = m_storage.find(address);
+            if(it != m_storage.end())
+            {
+                Byte response = it->second;
+                std::cout << "HardDisk: Sending response: 0x" << std::hex << (int)response << std::dec << std::endl;
+                gpio.tx.write(response);
+            }
+            else
+            {
+                std::cout << "HardDisk: Address 0x" << std::hex << (int)address << " not found!" << std::dec << std::endl;
+                gpio.tx.write(0x00); 
+            }
+        }
+        
         return 0;
     }
-
+    ////////////////////////////////////////////////////////////////
 private:
     std::unordered_map<Byte, Byte> m_storage = {
      {0b00000000, 0b10101101}, // 0x00 -> 0xAD

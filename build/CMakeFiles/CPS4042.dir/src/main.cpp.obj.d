@@ -1,7 +1,7 @@
 CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  D:\A_University\CPS\ca1\src\main.cpp \
- D:/A_University/CPS/ca1/include/CPS4042/Sketchs/Microcontroller.h \
- D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Boards/Esp8266.h \
+ D:/A_University/CPS/ca1/include/CPS4042/Sketchs/HardDisk.h \
+ D:/A_University/CPS/ca1/include/CPS4042/Hardwares/comm/Usb.h \
  D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Board.h \
  D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Processor.h \
  D:/A_University/CPS/ca1/include/CPS4042/Globals/Object.h \
@@ -1104,11 +1104,6 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  D:/A_University/CPS/ca1/include/CPS4042/Wires/Pin.h \
  D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Transmitter.h \
  D:/A_University/CPS/ca1/include/CPS4042/Sketchs/AbstractSketch.h \
- D:/A_University/CPS/ca1/include/CPS4042/Utils/ByteStream.h \
- D:/A_University/CPS/ca1/include/CPS4042/Utils/Wave.h \
- C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bitset \
- D:/A_University/CPS/ca1/include/CPS4042/Sketchs/Sensor.h \
- D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Sensors/VL530X.h \
  C:/boost/boost_1_84_0/boost/random/mersenne_twister.hpp \
  C:/boost/boost_1_84_0/boost/integer/integer_mask.hpp \
  C:/boost/boost_1_84_0/boost/integer.hpp \
@@ -1135,5 +1130,7 @@ CMakeFiles/CPS4042.dir/src/main.cpp.obj: \
  C:/boost/boost_1_84_0/boost/random/uniform_int_distribution.hpp \
  C:/boost/boost_1_84_0/boost/random/detail/operators.hpp \
  C:/boost/boost_1_84_0/boost/random/detail/uniform_int_float.hpp \
+ D:/A_University/CPS/ca1/include/CPS4042/Sketchs/Microcontroller.h \
+ D:/A_University/CPS/ca1/include/CPS4042/Hardwares/Boards/Esp8266.h \
  D:/A_University/CPS/ca1/include/CPS4042/main.h \
  C:/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/csignal

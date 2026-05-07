@@ -85,34 +85,154 @@ public:
 
     } mutable i2c {this};
 
+    // class USART : public Protocols::AbstractUsart<Esp8266, Gpio>
+    // {
+    // public:
+    //     explicit USART(Esp8266* b) :
+    //         Protocols::AbstractUsart<Esp8266, Gpio> {b}
+    //     {}
+
+    //     void
+    //     write(Byte byte) override
+    //     {}
+
+    //     Byte
+    //     read() override
+    //     {
+    //         return 0;
+    //     }
+
+    //     void
+    //     run(Gpio& gpio) override
+    //     {}
+
+    // } mutable usart {this};
+
     class USART : public Protocols::AbstractUsart<Esp8266, Gpio>
     {
     public:
         explicit USART(Esp8266* b) :
-            Protocols::AbstractUsart<Esp8266, Gpio> {b}
+            Protocols::AbstractUsart<Esp8266, Gpio> {b},
+            m_isSending(false),
+            m_isReceiving(false),
+            m_bitIndex(0),
+            m_currentByte(0),
+            m_receivingByte(0)
         {}
 
-        void
-        write(Byte byte) override
-        {}
-
-        Byte
-        read() override
+        void write(Byte byte) override
         {
-            return 0;
+            m_txBuffer.push(byte);
         }
 
-        void
-        run(Gpio& gpio) override
-        {}
+        Byte read() override
+        {
+            if(m_rxBuffer.empty()) return 0;
+            Byte b = m_rxBuffer.front();
+            m_rxBuffer.pop();
+            return b;
+        }
+
+        void run(Gpio& gpio) override
+        {
+            if(!m_txBuffer.empty() && !m_isSending)
+            {
+                m_currentByte = m_txBuffer.front();
+                m_txBuffer.pop();
+                m_isSending = true;
+                m_bitIndex = 0;
+                
+                gpio.tx.write(Bit::Zero);
+                return;
+            }
+            
+            if(m_isSending)
+            {
+                m_bitIndex++;
+                
+                if(m_bitIndex >= 1 && m_bitIndex <= 8)
+                {
+                   
+                    int bitPos = m_bitIndex - 1;
+                    Bit bit = ((m_currentByte >> bitPos) & 1) ? Bit::One : Bit::Zero;
+                    gpio.tx.write(bit);
+                }
+                else if(m_bitIndex == 9)
+                {
+                  
+                    int ones = 0;
+                    for(int i = 0; i < 8; i++)
+                        if((m_currentByte >> i) & 1) ones++;
+                    Bit parity = (ones % 2 == 0) ? Bit::Zero : Bit::One;
+                    gpio.tx.write(parity);
+                }
+                else if(m_bitIndex == 10)
+                {
+                    
+                    gpio.tx.write(Bit::One);
+                    m_isSending = false;
+                    m_bitIndex = 0;
+                }
+            }
+            
+          
+            if(gpio.rx.hasBitToRead())
+            {
+                Bit bit = gpio.rx.readBit();
+                
+                if(!m_isReceiving)
+                {
+                   
+                    if(bit == Bit::Zero)
+                    {
+                        m_isReceiving = true;
+                        m_bitIndex = 0;
+                        m_receivingByte = 0;
+                    }
+                }
+                else
+                {
+                    m_bitIndex++;
+                    
+                    if(m_bitIndex >= 1 && m_bitIndex <= 8)
+                    {
+                       
+                        if(bit == Bit::One)
+                            m_receivingByte |= (1 << (m_bitIndex - 1));
+                    }
+                    else if(m_bitIndex == 9)
+                    {
+                        // Parity bit (بررسی)
+                    }
+                    else if(m_bitIndex == 10)
+                    {
+                       
+                        m_isReceiving = false;
+                        m_rxBuffer.push(m_receivingByte);
+                        m_bitIndex = 0;
+                    }
+                }
+            }
+        }
+
+    private:
+        std::queue<Byte> m_txBuffer;
+        std::queue<Byte> m_rxBuffer;
+        
+        bool m_isSending;
+        bool m_isReceiving;
+        int m_bitIndex;
+        Byte m_currentByte;
+        Byte m_receivingByte;
 
     } mutable usart {this};
+///////////////////////////////////////////////////////////////////////
 
 protected:
     inline void
     startModule() override
     {}
 };
-}    // namespace Boards
+}    
 
 #endif    // ESP8266_H
