@@ -3,19 +3,18 @@
 
 #include <CPS4042/Hardwares/Comm/Usb.h>
 #include <CPS4042/Sketchs/AbstractSketch.h>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
+#include <CPS4042/Units/Bit.h>          // for takeNthBit
+#include <iostream>
+#include <unordered_map>
 
 class HardDisk : public AbstractSketch<Sensors::Usb>
 {
 public:
-    explicit HardDisk(Sensors::Usb* node) :
-        AbstractSketch<Sensors::Usb> {node}
-    {}
+    explicit HardDisk(Sensors::Usb* node) : AbstractSketch<Sensors::Usb>{node} {}
 
+    // Bind the storage map to the USART protocol
     std::int32_t setup(Sensors::Usb::Gpio& gpio) override
     {
-        // Bind the storage map to the USART protocol
         node()->usart.setLookup([this](Byte addr) -> Byte {
             auto it = m_storage.find(addr);
             return (it != m_storage.end()) ? it->second : 0x00;
@@ -24,20 +23,20 @@ public:
         return 0;
     }
 
-    std::int32_t loop(Sensors::Usb::Gpio& gpio) override
-    {
-        // Fetch and log any completed transaction
-        auto tx = node()->usart.fetchLastTransaction();
-        if (tx.valid) {
-            static unsigned int requestCount = 0;
-            ++requestCount;
-            std::cout << "[HardDisk #" << requestCount
-                      << "] address = 0x" << std::hex << (int)tx.address
-                      << " -> data = 0x" << (int)tx.data << std::dec
-                      << std::endl;
-        }
-        return 0;
+    // Send response when requested, then log
+std::int32_t loop(Sensors::Usb::Gpio& gpio) override
+{
+    // Check if a transaction completed
+    auto tx = node()->usart.fetchLastTransaction();
+    if (tx.valid) {
+        static unsigned cnt = 0;
+        ++cnt;
+        std::cout << "[HardDisk #" << cnt << "] addr=0x" << std::hex
+                  << (unsigned)(unsigned char)tx.address << " -> 0x"
+                  << (unsigned)(unsigned char)tx.data << std::dec << std::endl;
     }
+    return 0;
+}
 
 private:
     std::unordered_map<Byte, Byte> m_storage = {

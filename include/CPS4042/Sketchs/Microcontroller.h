@@ -11,10 +11,9 @@ public:
     explicit MicroController(Boards::Esp8266* node)
         : AbstractSketch<Boards::Esp8266>{node} {}
 
-    std::int32_t setup(Boards::Esp8266::Gpio&) override
-    {
-        std::cout << "[SETUP] Microcontroller ready" << std::endl;
-        node()->i2c.write(0x29);
+    std::int32_t setup(Boards::Esp8266::Gpio&) override{
+        std::cout << "Setup micro" << std::endl;
+        node()->i2c.init(0x29);
         return 0;
     }
 
@@ -31,27 +30,38 @@ public:
             std::cout << ">>> DISTANCE = " << distance << " mm" << std::endl;
         }
 
-        if (node()->i2c.isIdle()){
+        if (node()->i2c.isIdle())
             node()->i2c.write(0x29);
-        }
+
+
+        delay(300);
+
 
         // ================= USART part =================
-        static uint8_t addr = 0;
 
-        if (!node()->usart.hasResponse() && !node()->usart.isBusy()) {  
-            node()->usart.request(addr);
-        }
 
-        if (node()->usart.hasResponse()) {
-            Byte data = node()->usart.getResponse();
-            std::cout << "MCU USART: addr=" << (int)addr << " -> " << (int)data << std::endl;
-            addr = (addr + 1) % 256;
-            node()->usart.request(addr);
-        }   
+        // static uint8_t addr = 0;
+        // Byte data = 0;
 
-        delay(500);
+        
+        // if (node()->usart.hasDataArrived()){
+        //     data = node()->usart.getReceivedByte();
+        //     std::cout << "address : " << (int)addr << "value : " << (int)data << std::endl;
+
+        // }
+
+
+        // if (!node()->usart.hasRequestLock()) {
+        //     addr = (addr + 1) % 256;
+        //     std::cout << "MCU: addr=" << (int)addr
+        //             << " -> " << (unsigned)(unsigned char)addr << std::endl;
+        //     node()->usart.request(addr);
+        // }
         return 0;
+    
     }
+        
+        
 };
 
 #endif

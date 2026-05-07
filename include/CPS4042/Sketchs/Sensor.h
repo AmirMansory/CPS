@@ -15,6 +15,8 @@ public:
     std::int32_t setup(Sensors::Vl530x::Gpio&) override
     {
         std::srand(static_cast<unsigned>(std::time(nullptr)));
+        uint16_t distance = std::rand() % 4001;   // 0 – 4000 mm
+        node()->i2c.setData(distance);
         std::cout << "[SETUP] Sensor ready" << std::endl;
         return 0;
     }
@@ -24,9 +26,11 @@ public:
         if (node()->i2c.isReady())
         {
             uint16_t distance = std::rand() % 4001;   // 0 – 4000 mm
+            std::cout << "sensing : " << (int)distance << std::endl;
             node()->i2c.setData(distance);
         }
-        delay(500);
+        delay(300);
+
         return 0;
     }
 };
