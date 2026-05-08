@@ -9,6 +9,8 @@
 #include <boost/pfr.hpp>
 #include <iostream>
 #include <bitset>
+#include <queue>
+#include <cmath>
 
 namespace Boards
 {
@@ -47,7 +49,7 @@ public:
         m_processor->communicationClockChanged.connect(
           [this](Bit edge) { m_gpio.scl.nextEdge(edge); });
         m_processor->installProtocol(&i2c);
-        m_processor->installProtocol(&usart);
+        m_processor->installProtocol(&usart);      
     }
 
     class I2C : public Protocols::AbstractI2C<Esp8266, Gpio>
@@ -55,143 +57,115 @@ public:
     public:
         explicit I2C(Esp8266* b) : Protocols::AbstractI2C<Esp8266, Gpio>{b} {}
 
-        void init(Byte) override {}
+        void init(Byte address) override {
+            if (m_state != State::WaitAck && m_state != State::Done) return;
+            std::cout << "[MASTER] Microcontroller ready --> proceed" << std::endl;
+            write(address);
+        }
 
-        void write(Byte address) override
-        {
-            if (m_state != State::Idle && m_state != State::Done) return;
+        void write(Byte address) override{
+            if (m_board->m_gpio.sda.hasBitToWrite()) return;
+            
+            uint8_t u_addr = static_cast<uint8_t>(address);
+            std::cout << ">>> [MASTER] Start -> addr 0x" << std::hex << (int)u_addr << std::dec << std::endl;
 
-            // Clean start: flush all echoed bits from previous transaction
-            while (m_board->m_gpio.sda.hasBitToRead())
-                m_board->m_gpio.sda.readBit();
-
-            std::cout << ">>> [MASTER] Start -> addr 0x"
-                      << std::hex << (int)(uint8_t)address << std::dec << std::endl;
-
+            while(m_board->m_gpio.sda.hasBitToRead())
+                    m_board->m_gpio.sda.read();
+            
             m_slaveAddress = address;
             Byte addr = (address << 1) | 0x01;
             m_board->m_gpio.sda.write(addr);
-            m_state = State::SendAddress;
+            
             m_transactionActive = true;
             resetTransaction();
+            m_state = State::WaitAck;
         }
 
-        Byte read() override
-        {
+        Byte read() override{
             if (m_buffer.empty()) return 0;
-            Byte v = m_buffer.front(); m_buffer.pop();
+            Byte v = m_buffer.front(); 
+            m_buffer.pop();
             return v;
         }
 
-        bool isIdle() const { return m_state == State::Idle || m_state == State::Done; }
+        bool isIdle() const { return (m_state == State::Done); }
+        bool isDataAvailable() const { return !m_buffer.empty(); }
 
         void run(Gpio& gpio) override
         {
             if (!m_transactionActive) return;
-
-            if (m_state != State::Idle && m_state != State::Done)
-            {
+            if (m_state != State::Done){
                 if (++m_timeoutCounter > TIMEOUT_CYCLES) {
-                    std::cout << "[MASTER] Timeout" << std::endl;
+                    std::cout << "[MASTER] ❌ Timeout" << std::endl;
                     m_state = State::Error;
                 }
             }
 
             switch (m_state) {
 
-            // ---- send address byte ----
-            case State::SendAddress:
-                if (m_board->m_gpio.sda.hasBitToWrite() > 0) return;
-                m_state = State::WaitAck;
-                m_timeoutCounter = 0;
-                break;
-
-            // ---- wait for slave ACK ----
             case State::WaitAck: {
-                if (!m_board->m_gpio.sda.hasBitToRead()) return;
-                Bit ack = m_board->m_gpio.sda.readBit();
-                if (ack == Bit::Zero) {
-                    std::cout << ">>> [MASTER] ACK received" << std::endl;
+                if (!gpio.sda.hasBitToRead()) break;
+                Bit ack = gpio.sda.readBit();
+                if (ack == Bit::One) {
+                    printf("[MASTER] ✅ ACK received from slave\n");
                     m_state = State::ReadByte;
                     m_timeoutCounter = 0;
-                } else {
-                    std::cout << "[MASTER] NACK - abort" << std::endl;
-                    m_state = State::Error;
                 }
                 break;
             }
 
-            // ---- read one data byte (bit by bit) ----
             case State::ReadByte: {
-                if (!gpio.sda.hasBitToRead()) return;
-                Bit b = gpio.sda.readBit();
-                m_currentByte = (m_currentByte << 1) | (b == Bit::One);
-                if (++m_bitCounter == 8) {
-                    std::cout << ">>> [MASTER] Byte: 0x"
-                              << std::hex << (int)(uint8_t)m_currentByte << std::dec << std::endl;
-                    storeByte(m_currentByte);
-                    m_bitCounter = 0; m_currentByte = 0;
-                    if (++m_byteCounter < PACKET_SIZE)
-                        m_state = State::SendAck;
-                    else
+                if (!gpio.sda.hasByteToRead()) break;
+
+                if (m_byteCounter == 0){
+                    m_b1 = gpio.sda.read();
+                    m_byteCounter++;
+                } else if(m_byteCounter == 1){
+                    m_b2 = gpio.sda.read();
+                    m_byteCounter++;
+                } else if(m_byteCounter == 2){
+                    m_checksum = gpio.sda.read();
+                    m_byteCounter++;
+
+                    uint8_t u_b1 = static_cast<uint8_t>(m_b1);
+                    uint8_t u_b2 = static_cast<uint8_t>(m_b2);
+                    uint8_t u_cs = static_cast<uint8_t>(m_checksum);
+
+                    printf("[MASTER] 📥 Received bytes: b1=0x%02X, b2=0x%02X, cs=0x%02X\n", u_b1, u_b2, u_cs);
+                    
+                    // فرمول ریاضی: $cs = |b_1 - b_2|$
+                    uint8_t calc_cs = static_cast<uint8_t>(std::abs(static_cast<int>(u_b1) - static_cast<int>(u_b2)));
+                    
+                    if (calc_cs == u_cs) {
+                        printf("[MASTER] ✅ Checksum OK (0x%02X)\n", calc_cs);
+                        m_buffer.push(m_b1);
+                        m_buffer.push(m_b2);
                         m_state = State::SendNack;
+                    } else {
+                        printf("[MASTER] ❌ Checksum mismatch! calc=0x%02X, recv=0x%02X\n", calc_cs, u_cs);
+                        m_state = State::SendNack;
+                    }                    
                 }
                 break;
             }
 
-            // ---- send ACK and then flush its echo ----
-            case State::SendAck:
-                gpio.sda.write(Bit::Zero);
-                m_state = State::FlushAckEcho;
-                break;
-
-            // ---- swallow the echoed ACK bit before reading next byte ----
-            case State::FlushAckEcho:
-                if (m_board->m_gpio.sda.hasBitToRead()) {
-                    m_board->m_gpio.sda.readBit();  // discard echoed ACK
-                    m_state = State::ReadByte;
-                }
-                break;
-
-            // ---- send NACK ----
-            case State::SendNack:
-                gpio.sda.write(Bit::One);
-                m_state = State::Validate;
-                break;
-
-            // ---- validate checksum ----
-            case State::Validate: {
-                uint8_t ub1 = static_cast<uint8_t>(m_b1);
-                uint8_t ub2 = static_cast<uint8_t>(m_b2);
-                uint8_t ucs = static_cast<uint8_t>(m_checksum);
-                uint8_t maxv = (ub1 > ub2) ? ub1 : ub2;
-                uint8_t minv = (ub1 > ub2) ? ub2 : ub1;
-
-                if (maxv - minv == ucs || maxv-minv == ucs + 1) {
-                    std::cout << ">>> [MASTER] Checksum OK: checksum = 0x" << std::hex << (int)(maxv - minv)
-                            << " (0b" << std::bitset<8>(maxv - minv) << ") or 0x" << (int)(maxv - minv - 1)
-                            << " (0b" << std::bitset<8>(maxv - minv - 1) << ") as expected" << std::dec << std::endl;
-                    m_buffer.push(m_b1);
-                    m_buffer.push(m_b2);
-                } else {
-                    std::cout << "[MASTER] Checksum FAIL (expected 0x"
-                              << std::hex << (int)(maxv - minv) << ")" << std::dec << std::endl;
-                }
+            case State::SendNack: {
+                if (gpio.sda.hasBitToWrite()) break;
+                gpio.sda.write(Bit::One); // ارسال سیگنال پایان تراکنش (NACK)
                 m_state = State::Done;
-                m_transactionActive = false;
                 break;
             }
 
-            // ---- error / done ----
+
             case State::Error:
+                printf("[MASTER] ⚠️ Entered Error state – resetting transaction\n");
                 m_state = State::Done;
-                m_transactionActive = false;
                 break;
 
-            case State::Done:
-                // Final flush of any leftover echoes
-                while (m_board->m_gpio.sda.hasBitToRead())
-                    m_board->m_gpio.sda.readBit();
+            case State::Done:             
+                if(gpio.sda.hasBitToWrite()) return;
+                while(gpio.sda.hasBitToRead())
+                    gpio.sda.read();
                 m_transactionActive = false;
                 break;
 
@@ -201,28 +175,21 @@ public:
 
     private:
         enum class State : uint8_t {
-            Idle, SendAddress, WaitAck, ReadByte,
-            SendAck, FlushAckEcho, SendNack, Validate, Done, Error
+            WaitAck, ReadByte, SendAck, SendNack, Done, Error
         };
-        State m_state = State::Idle;
-        Byte m_slaveAddress = 0x00;
-        static constexpr uint8_t PACKET_SIZE = 3;
+        State m_state = State::Done;
+        Byte m_slaveAddress = 0x00; 
         static constexpr uint32_t TIMEOUT_CYCLES = 2000;
         uint32_t m_timeoutCounter = 0;
-        uint8_t m_bitCounter = 0, m_byteCounter = 0;
-        Byte m_currentByte = 0;
+        uint8_t m_byteCounter = 0;
         Byte m_b1 = 0, m_b2 = 0, m_checksum = 0;
         bool m_transactionActive = false;
+        std::queue<Byte> m_buffer;
 
         void resetTransaction() {
-            m_timeoutCounter = m_bitCounter = m_byteCounter = 0;
-            m_currentByte = 0;
-        }
-
-        void storeByte(Byte b) {
-            if (m_byteCounter == 0) m_b1 = b;
-            else if (m_byteCounter == 1) m_b2 = b;
-            else m_checksum = b;
+            m_timeoutCounter = 0;
+            m_b1 = 0; m_b2 = 0; m_checksum = 0;
+            m_byteCounter = 0;
         }
     } mutable i2c{this};
 
@@ -230,15 +197,115 @@ public:
     {
     public:
         explicit USART(Esp8266* b) : Protocols::AbstractUsart<Esp8266, Gpio>{b} {}
+
         void write(Byte) override {}
         Byte read() override { return 0; }
-        void run(Gpio&) override {}
-    } mutable usart{this};
+
+        void request(Byte address)
+        {
+            if (m_txState != TxIdle || m_requestPending) return;
+            m_addressToSend = address;
+            m_requestPending = true;
+            m_txState = TxStart;
+            std::cout << "[MASTER] ➡️ Request addr 0x"
+                    << std::hex << static_cast<int>(static_cast<uint8_t>(address)) << std::dec << std::endl;
+        }
+
+        bool hasRequestLock() const { return m_requestPending; }
+        bool hasDataArrived() const { return m_dataReady; }
+        Byte getReceivedByte() { m_dataReady = false; return m_receivedData; }
+
+        void run(Gpio& gpio) override
+        {
+            // ---- TRANSMITTER ----
+            switch (m_txState)
+            {
+            case TxIdle: break;
+            case TxStart:
+                gpio.tx.write(Bit::Zero);        
+                m_txState = TxData;
+                break;
+            case TxData:
+                if (!gpio.tx.hasBitToWrite()){
+                    gpio.tx.write(m_addressToSend); 
+                    m_txState = TxStop;
+                }
+                break;
+            case TxStop:
+                if (!gpio.tx.hasBitToWrite()){
+                    gpio.tx.write(Bit::One);   
+                    if (m_txStopSent){
+                        m_txStopSent = false;
+                        m_requestPending = false;
+                        m_txState = TxIdle;
+                    }
+                    else{
+                        m_txStopSent = true;
+                    }
+                }
+                break;
+            }
+
+            // ---- RECEIVER ----
+            switch (m_rxState)
+            {
+            case RxIdle:
+                if (gpio.rx.hasBitToRead()){
+                    Bit b = gpio.rx.readBit();
+                    if (b == Bit::Zero)            
+                        m_rxState = RxData;
+                }
+                break;
+            case RxData:
+                if (gpio.rx.hasByteToRead()){
+                    m_rxByte = gpio.rx.read();
+                    m_rxState = RxStop;
+                }
+                break;
+            case RxStop:
+                if (gpio.rx.hasBitToRead()){
+                    Bit stop = gpio.rx.readBit();
+                    if (stop == Bit::One){
+                        m_receivedData = m_rxByte;
+                        m_dataReady = true;
+                        std::cout << "[MASTER] ✅ Received data 0x"
+                                << std::hex << static_cast<int>(static_cast<uint8_t>(m_rxByte)) << std::dec << std::endl;
+                    }
+                    else{
+                        std::cout << "[MASTER] ❌ Bad stop bit" << std::endl;
+                    }
+                    m_rxState = RxIdle;
+                }
+                break;
+            }
+        }
+
+    private:
+        enum TxState { TxIdle, TxStart, TxData, TxStop };
+        enum RxState { RxIdle, RxData, RxStop };
+
+        TxState m_txState = TxIdle;
+        RxState m_rxState = RxIdle;
+
+        Byte    m_addressToSend = 0;
+        bool    m_requestPending = false;
+        bool    m_txStopSent = false;    
+
+        Byte    m_rxByte = 0;
+        Byte    m_receivedData = 0;
+        bool    m_dataReady = false;
+    }mutable usart{this};
+
 
 protected:
-    void startModule() override {}
+    void startModule() override {        
+        
+        m_gpio.scl.onNextEdge([this](Esp8266Voltage level) {
+            auto bit = Voltage::toBit(level);
+            if (bit == Bit::One) m_processor->nextCycle(m_gpio);
+        });
+    }
 };
-
 } // namespace Boards
-#endif
 
+#endif

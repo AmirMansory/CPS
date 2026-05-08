@@ -1,3 +1,0 @@
-"C:\Program Files (x86)\CMake\bin\cmake.exe" -E rm -f CMakeFiles\CPS4042.dir/objects.a
-C:\mingw1310_64\bin\ar.exe qc CMakeFiles\CPS4042.dir/objects.a @CMakeFiles\CPS4042.dir\objects1.rsp
-C:\mingw1310_64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\CPS4042.dir/objects.a -Wl,--no-whole-archive -o CPS4042.exe -Wl,--out-implib,libCPS4042.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\CPS4042.dir\linkLibs.rsp
