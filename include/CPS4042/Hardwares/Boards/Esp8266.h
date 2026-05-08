@@ -49,6 +49,7 @@ public:
         m_processor->communicationClockChanged.connect(
           [this](Bit edge) { m_gpio.scl.nextEdge(edge); });
         m_processor->installProtocol(&i2c);
+        m_processor->installProtocol(&usart);      
     }
 
     class I2C : public Protocols::AbstractI2C<Esp8266, Gpio>
@@ -67,6 +68,9 @@ public:
             
             uint8_t u_addr = static_cast<uint8_t>(address);
             std::cout << ">>> [MASTER] Start -> addr 0x" << std::hex << (int)u_addr << std::dec << std::endl;
+
+            while(m_board->m_gpio.sda.hasBitToRead())
+                    m_board->m_gpio.sda.read();
             
             m_slaveAddress = address;
             Byte addr = (address << 1) | 0x01;
@@ -136,22 +140,32 @@ public:
                         printf("[MASTER] ✅ Checksum OK (0x%02X)\n", calc_cs);
                         m_buffer.push(m_b1);
                         m_buffer.push(m_b2);
-                        m_state = State::Done;
+                        m_state = State::SendNack;
                     } else {
                         printf("[MASTER] ❌ Checksum mismatch! calc=0x%02X, recv=0x%02X\n", calc_cs, u_cs);
-                        m_state = State::Error;
+                        m_state = State::SendNack;
                     }                    
                 }
                 break;
             }
 
+            case State::SendNack: {
+                if (gpio.sda.hasBitToWrite()) break;
+                gpio.sda.write(Bit::One); // ارسال سیگنال پایان تراکنش (NACK)
+                m_state = State::Done;
+                break;
+            }
+
+
             case State::Error:
                 printf("[MASTER] ⚠️ Entered Error state – resetting transaction\n");
-                m_transactionActive = false;
                 m_state = State::Done;
                 break;
 
             case State::Done:             
+                if(gpio.sda.hasBitToWrite()) return;
+                while(gpio.sda.hasBitToRead())
+                    gpio.sda.read();
                 m_transactionActive = false;
                 break;
 
@@ -179,9 +193,119 @@ public:
         }
     } mutable i2c{this};
 
-    // ... (بخش USART بدون تغییر)
+    class USART : public Protocols::AbstractUsart<Esp8266, Gpio>
+    {
+    public:
+        explicit USART(Esp8266* b) : Protocols::AbstractUsart<Esp8266, Gpio>{b} {}
+
+        void write(Byte) override {}
+        Byte read() override { return 0; }
+
+        void request(Byte address)
+        {
+            if (m_txState != TxIdle || m_requestPending) return;
+            m_addressToSend = address;
+            m_requestPending = true;
+            m_txState = TxStart;
+            std::cout << "[MASTER] ➡️ Request addr 0x"
+                    << std::hex << static_cast<int>(static_cast<uint8_t>(address)) << std::dec << std::endl;
+        }
+
+        bool hasRequestLock() const { return m_requestPending; }
+        bool hasDataArrived() const { return m_dataReady; }
+        Byte getReceivedByte() { m_dataReady = false; return m_receivedData; }
+
+        void run(Gpio& gpio) override
+        {
+            // ---- TRANSMITTER ----
+            switch (m_txState)
+            {
+            case TxIdle: break;
+            case TxStart:
+                gpio.tx.write(Bit::Zero);        
+                m_txState = TxData;
+                break;
+            case TxData:
+                if (!gpio.tx.hasBitToWrite()){
+                    gpio.tx.write(m_addressToSend); 
+                    m_txState = TxStop;
+                }
+                break;
+            case TxStop:
+                if (!gpio.tx.hasBitToWrite()){
+                    gpio.tx.write(Bit::One);   
+                    if (m_txStopSent){
+                        m_txStopSent = false;
+                        m_requestPending = false;
+                        m_txState = TxIdle;
+                    }
+                    else{
+                        m_txStopSent = true;
+                    }
+                }
+                break;
+            }
+
+            // ---- RECEIVER ----
+            switch (m_rxState)
+            {
+            case RxIdle:
+                if (gpio.rx.hasBitToRead()){
+                    Bit b = gpio.rx.readBit();
+                    if (b == Bit::Zero)            
+                        m_rxState = RxData;
+                }
+                break;
+            case RxData:
+                if (gpio.rx.hasByteToRead()){
+                    m_rxByte = gpio.rx.read();
+                    m_rxState = RxStop;
+                }
+                break;
+            case RxStop:
+                if (gpio.rx.hasBitToRead()){
+                    Bit stop = gpio.rx.readBit();
+                    if (stop == Bit::One){
+                        m_receivedData = m_rxByte;
+                        m_dataReady = true;
+                        std::cout << "[MASTER] ✅ Received data 0x"
+                                << std::hex << static_cast<int>(static_cast<uint8_t>(m_rxByte)) << std::dec << std::endl;
+                    }
+                    else{
+                        std::cout << "[MASTER] ❌ Bad stop bit" << std::endl;
+                    }
+                    m_rxState = RxIdle;
+                }
+                break;
+            }
+        }
+
+    private:
+        enum TxState { TxIdle, TxStart, TxData, TxStop };
+        enum RxState { RxIdle, RxData, RxStop };
+
+        TxState m_txState = TxIdle;
+        RxState m_rxState = RxIdle;
+
+        Byte    m_addressToSend = 0;
+        bool    m_requestPending = false;
+        bool    m_txStopSent = false;    
+
+        Byte    m_rxByte = 0;
+        Byte    m_receivedData = 0;
+        bool    m_dataReady = false;
+    }mutable usart{this};
+
+
 protected:
-    void startModule() override {}
+    void startModule() override {        
+        
+        m_gpio.scl.onNextEdge([this](Esp8266Voltage level) {
+            auto bit = Voltage::toBit(level);
+            if (bit == Bit::One) m_processor->nextCycle(m_gpio);
+        });
+    }
 };
 } // namespace Boards
+
 #endif

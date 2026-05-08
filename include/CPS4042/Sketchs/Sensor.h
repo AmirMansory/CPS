@@ -29,7 +29,7 @@ public:
             std::cout << "sensing : " << (int)distance << std::endl;
             node()->i2c.setData(distance);
         }
-        delay(300);
+        delay(70);
 
         return 0;
     }
